@@ -40,7 +40,6 @@ class Network:
             current_iteration += 1
             delta_weights = 0
             training_set = training_set.sample(frac=1)  # shuffle training set
-            sample = [(row[:-1], row[-1]) for row in training_set.values]
             for row in training_set.itertuples(index=False):
                 input = row[:-1]
                 expected_result = row[-1]
