@@ -37,40 +37,48 @@ class Network:
             input_value = output
         return output
 
-    def backward_pass(self, expected_result: float) -> None:
+    def backward_pass(self, expected_result: list[float]) -> None:
         for (layer_index, layer) in reversed(list(enumerate(self.layers))):
             next_layer = self.layers[layer_index + 1] if layer_index + 1 < len(self.layers) else None
             for neuron in layer.neurons:
                 neuron.calculate_error(expected_result, next_layer)
 
-    def learn(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
+    def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
         while not self.stop_condition_met(current_iteration):
             current_iteration += 1
-            print(f'Epoch: {current_iteration}')
+            sum_error = 0
             training_set = training_set.sample(frac=1)  # shuffle training set
-            x_train, y_train = training_set.values[:, :-1], training_set.values[:,-1]
+            x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
             input_value: np.ndarray
             expected_result: float
             for (input_value, expected_result) in zip(x_train, y_train):
-                self.forward_pass(input_value)
-                self.backward_pass(expected_result)
+                outputs = self.forward_pass(input_value)
+                expected = [0 for i in range(len(outputs))]
+                expected[int(expected_result) - 1] = 1
+                sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))])
+                self.backward_pass(expected)
                 self.update_weights()
             if visualize:
                 self.visualize_network(current_iteration)
+            print(f'> epoch={current_iteration}, learning_rate={self.learning_rate:.3f}, error={sum_error:.3f}')
         print(f'Finished learning after {current_iteration} epochs')
 
     def stop_condition_met(self, current_iteration: int) -> bool:
         # TODO: Maybe more conditions?
         return current_iteration >= self.epoch_no
 
-    def compute(self, test_set: pd.DataFrame) -> list[list[float]]:
-        output = []
-        x_test = test_set.values[:, :-1]
+    def get_classification(self, test_set: pd.DataFrame) -> list[int]:
+        predictions = []
+        x_test, y_test = test_set.values[:, :-1], test_set.values[:, -1]
         input_value: np.ndarray
-        for input_value in x_test:
-            output.append(self.forward_pass(input_value))
-        return output
+        expected: float
+        for (input_value, expected) in zip(x_test, y_test):
+            output = self.forward_pass(input_value)
+            prediction = output.index(max(output)) + 1
+            predictions.append(prediction)
+            print(f'Expected={int(expected)}, Got={prediction}')
+        return predictions
 
     def update_weights(self) -> None:
         for layer in self.layers:

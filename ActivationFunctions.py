@@ -3,10 +3,10 @@ from cmath import tanh
 
 class ActivationFunctions:
     @staticmethod
-    def sigmoid(x_value: float, derivative = False) -> float:
+    def sigmoid(x_value: float, derivative: bool = False) -> float:
         if derivative:
-            return ActivationFunctions.sigmoid(x_value) * (1 - ActivationFunctions.sigmoid(x_value))
-        return 1 / (1 + e ** -x_value)
+            return x_value * (1.0 - x_value)
+        return 1.0 / (1.0 + e ** -x_value)
 
     @staticmethod
     def tanh(x_value: float, derivative = False) -> float:
