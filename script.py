@@ -1,62 +1,50 @@
-# Imports
-import csv
-from cmath import tanh
-from math import e
-import random
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
+from ActivationFunctions import ActivationFunctions
+from DataVisualizer import DataVisualizer
+from DataManager import DataManager
+from Layer import Layer
+from Network import Network
+from Neuron import Neuron
 
-# Activation functions
+# Training data loading
+data_manager = DataManager("classification/data.simple.train.100.csv")
+df = data_manager.get_data()
+# DataVisualizer.visualize_data(df)
 
-def sigmoid_func(x):
-    return 1 / (1 + e ** -x)
+# Network configuration
+input_size = len(df.values[0]) - 1
+network = Network(
+    learning_rate=0.1,
+    epoch_no=50,
+    initial_seed=1,
+    input_size=input_size
+)
 
-def tanh_func(x):
-    return tanh(x)
+basic_neuron = Neuron(
+    activation_function=ActivationFunctions.sigmoid,
+    activation_function_derivative=ActivationFunctions.sigmoid_derivative
+)
 
-def sign_func(x):
-    return -1 if (x < 0) else 1
+# Layers configuration
+hidden_layer_neurons_count = 2
+hidden_layer = Layer(
+    neurons=[basic_neuron.copy_neuron() for _ in range(hidden_layer_neurons_count)],
+    previous_layer_has_bias=True
+)
 
-# Network params
+classes_count = len(set([row[-1] for row in df.values]))
+output_layer_neurons_count = classes_count  # Should match number of classes -> one hot encoding
+output_layer = Layer(
+    neurons=[basic_neuron.copy_neuron() for _ in range(output_layer_neurons_count)],
+    previous_layer_has_bias=True
+)
 
-seed = 1
-layers_no = 3
-neurons_nos = [2, 3, 1]
-is_bias_present = True
+network.add_network_layer(hidden_layer)
+network.add_network_layer(output_layer)
 
-# print(sigmoid_func(1))
-# print(sign_func(-3))
-# print(sign_func(3))
+# Training of network
+network.train(df)
 
-# Reading data from file
-
-def read_data(filename):
-    return pd.read_csv(filename)
-
-# Visualize training set
-
-def visualize_data(df):
-    first_class = df[(df['cls']==1)]
-    ax = first_class.plot.scatter(x='x',y='y',c='g', label='First class')
-    second_class = df[(df['cls']==2)]
-    second_class.plot.scatter(x='x',y='y',ax=ax, c='r', label='Second class')
-    plt.title('Input data')
-    plt.show()
-
-#df = read_data("classification/data.simple.test.100.csv")
-df = read_data("classification/data.three_gauss.train.10000.csv")
-visualize_data(df)
-
-# Visualize classification effects - use colors for network classification and shapes for actual classes
-
-# TODO:
-# Initialize network using params and provided activation function - with random weight generation
-# Implement weights updating algorithm using backwards error propagation algorithm
-# Visualize weights and propagated error for each epoch
-
-
-
-# Think over specifying classes for neuron, layer, network?
-w = np.random.random_sample(size = 4)
-print(w)
+# Prediction on data from test set
+data_manager = DataManager("classification/data.simple.test.100.csv")
+df = data_manager.get_data()
+output = network.predict(df)
