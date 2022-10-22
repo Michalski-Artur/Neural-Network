@@ -43,10 +43,11 @@ class Network:
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
-                self.visualize(current_iteration)
+                self.visualize(current_iteration, current_iteration == self.__epoch_no)
             print(f'> epoch={current_iteration}, learning_rate={self.__learning_rate:.3f}, error={sum_error:.3f}')
         print(f'Finished learning after {current_iteration} epochs')
-        self.visualize(current_iteration)
+        if not visualize:
+            self.visualize(current_iteration, True)
 
     def get_classification_result(self, test_set: pd.DataFrame) -> list[int]:
         predictions = []
@@ -60,7 +61,7 @@ class Network:
             print(f'Expected={int(expected)}, Got={prediction}')
         return predictions
 
-    def visualize(self, epoch_number: int) -> None:
+    def visualize(self, epoch_number: int, view: bool = False) -> None:
         graph = Digraph('G', filename=f'output/network_{epoch_number}', format='png')
         graph.attr('graph', pad='1', ranksep='5', nodesep='0.3', label=f'Network in epoch {epoch_number}', labelloc='t', fontsize='50')
         graph.attr('node', shape='circle')
@@ -73,8 +74,8 @@ class Network:
                 label = f'Output_{j}' if i == len(self.__layers) - 1 else ''
                 graph.node(node_id, label)
                 for k, weight in enumerate(neuron.weights):
-                    graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={neuron.delta:.4f}')
-        graph.render(view=False)
+                    graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={weight * neuron.delta:.4f}')
+        graph.render(view=view)
 
     def __forward_pass(self, input_value: np.ndarray) -> list[float]:
         output = []
