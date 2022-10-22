@@ -39,7 +39,7 @@ class Network:
                 outputs = self.__forward_pass(input_value)
                 expected = [0 for i in range(len(outputs))]
                 expected[int(expected_result) - 1] = 1
-                sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))])
+                sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))]) # TODO: This error probably doesn't correspond with calculated one?
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
@@ -67,14 +67,17 @@ class Network:
         graph.attr('node', shape='circle')
         graph.attr('edge')
         for i in range(self.__input_size):
-            graph.node(f'0_{i}', f'Input_{i}')
+            graph.node(f'0_{i}', f'Input{i}')
         for i, layer in enumerate(self.__layers):
             for j, neuron in enumerate(layer.neurons):
                 node_id = f'{i+1}_{j}'
-                label = f'Output_{j}' if i == len(self.__layers) - 1 else ''
+                label = f'Output{j}' if i == len(self.__layers) - 1 else ''
                 graph.node(node_id, label)
                 for k, weight in enumerate(neuron.weights):
-                    graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={weight * neuron.delta:.4f}')
+                    prev_node_id = f'{i}_{k}'
+                    if layer.previous_layer_has_bias and k == len(neuron.weights) - 1:
+                        graph.node(prev_node_id, f'Bias{i}')
+                    graph.edge(prev_node_id, node_id, label=f'w={weight:.4f}\ne={weight * neuron.delta:.4f}')
         graph.render(view=view)
 
     def __forward_pass(self, input_value: np.ndarray) -> list[float]:
