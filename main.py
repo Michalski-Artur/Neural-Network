@@ -1,9 +1,9 @@
 import sys
 
-from ActivationFunctions import ActivationFunctions
-from DataManager import DataManager
-from DataVisualizer import DataVisualizer
-from Network import Network
+from activation_functions import ActivationFunctions
+from data_manager import DataManager
+from data_visualizer import DataVisualizer
+from network import Network
 from network_enums import ProblemType
 
 LEARNING_RATE = 0.1
@@ -43,11 +43,11 @@ def __main__() -> None:
     network = Network(input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, initial_seed, LEARNING_RATE, EPOCH_MAX)
     training_data = data_manager.training_data
     network.train(training_data)
-    training_result = network.get_classification(training_data)
+    training_result = network.get_classification_result(training_data)
     DataVisualizer.visualize_classification_data(training_data, training_result, 'Training data', 'output/training_data.png')
 
     test_data = data_manager.testing_data
-    test_result = network.get_classification(test_data)
+    test_result = network.get_classification_result(test_data)
     DataVisualizer.visualize_classification_data(test_data, test_result, 'Test data', 'output/test_data.png')
 
 def __parse_problem_type(problem_type: str) -> any:
