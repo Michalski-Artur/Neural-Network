@@ -7,12 +7,12 @@ from neuron import Neuron
 
 class Network:
     def __init__(self, input_size: int, output_size: int, use_bias: bool, hidden_layers_count: int, hidden_layer_neurons_count: int, activation_function: callable, initial_seed: int, learning_rate: float, epoch_max: int) -> None:
-        self.learning_rate = learning_rate
-        self.epoch_no = epoch_max
-        self.input_size = input_size
+        self.__learning_rate = learning_rate
+        self.__epoch_no = epoch_max
+        self.__input_size = input_size
         np.random.seed(initial_seed)
         basic_neuron = Neuron(activation_function)
-        self.layers: list[Layer] = []
+        self.__layers: list[Layer] = []
         hidden_layers = [Layer([basic_neuron.copy_neuron() for _ in range(hidden_layer_neurons_count)], use_bias) for _ in range(hidden_layers_count)]
         output_layer = Layer([basic_neuron.copy_neuron() for _ in range(output_size)], use_bias)
         for hidden_layer in hidden_layers:
@@ -20,10 +20,10 @@ class Network:
         self.add_network_layer(output_layer)
 
     def add_network_layer(self, layer: Layer) -> None:
-        previous_layer_size: int = self.input_size if len(self.layers) == 0 else len(self.layers[-1].neurons)
+        previous_layer_size: int = self.__input_size if len(self.__layers) == 0 else len(self.__layers[-1].neurons)
         if layer.previous_layer_has_bias:
             previous_layer_size += 1
-        self.layers.append(layer)
+        self.__layers.append(layer)
         layer.set_weights(previous_layer_size)
 
     def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
@@ -44,7 +44,7 @@ class Network:
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration)
-            print(f'> epoch={current_iteration}, learning_rate={self.learning_rate:.3f}, error={sum_error:.3f}')
+            print(f'> epoch={current_iteration}, learning_rate={self.__learning_rate:.3f}, error={sum_error:.3f}')
         print(f'Finished learning after {current_iteration} epochs')
         self.visualize(current_iteration)
 
@@ -65,12 +65,12 @@ class Network:
         graph.attr('graph', pad='1', ranksep='5', nodesep='0.3', label=f'Network in epoch {epoch_number}', labelloc='t', fontsize='50')
         graph.attr('node', shape='circle')
         graph.attr('edge')
-        for i in range(self.input_size):
+        for i in range(self.__input_size):
             graph.node(f'0_{i}', f'Input_{i}')
-        for i, layer in enumerate(self.layers):
+        for i, layer in enumerate(self.__layers):
             for j, neuron in enumerate(layer.neurons):
                 node_id = f'{i+1}_{j}'
-                label = f'Output_{j}' if i == len(self.layers) - 1 else ''
+                label = f'Output_{j}' if i == len(self.__layers) - 1 else ''
                 graph.node(node_id, label)
                 for k, weight in enumerate(neuron.weights):
                     graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={neuron.delta:.4f}')
@@ -78,7 +78,7 @@ class Network:
 
     def __forward_pass(self, input_value: np.ndarray) -> list[float]:
         output = []
-        for layer in self.layers:
+        for layer in self.__layers:
             if layer.previous_layer_has_bias:
                 input_value = np.append(input_value, 1)
             output = []
@@ -88,15 +88,15 @@ class Network:
         return output
 
     def __backward_pass(self, expected_result: list[float]) -> None:
-        for (layer_index, layer) in reversed(list(enumerate(self.layers))):
-            next_layer = self.layers[layer_index + 1] if layer_index + 1 < len(self.layers) else None
+        for (layer_index, layer) in reversed(list(enumerate(self.__layers))):
+            next_layer = self.__layers[layer_index + 1] if layer_index + 1 < len(self.__layers) else None
             for neuron in layer.neurons:
                 neuron.calculate_error(expected_result, next_layer)
 
     def __stop_condition_met(self, current_iteration: int) -> bool:
         # TODO: Maybe more conditions?
-        return current_iteration >= self.epoch_no
+        return current_iteration >= self.__epoch_no
 
     def __update_weights(self) -> None:
-        for layer in self.layers:
-            layer.update_weights(self.learning_rate)
+        for layer in self.__layers:
+            layer.update_weights(self.__learning_rate)
