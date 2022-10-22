@@ -12,10 +12,10 @@ class DataVisualizer:
         second_class_correct = second_class[(second_class['cls'] == second_class['cls_calculated'])]
         second_class_incorrect = second_class[(second_class['cls'] != second_class['cls_calculated'])]
 
-        axes = first_class_correct.plot.scatter(x='x', y='y', c='g', label=f'Correct first class ({len(first_class_correct)/len(first_class)*100:.3f}%)', marker = 'o')
-        first_class_incorrect.plot.scatter(x='x', y='y', ax=axes, c='r', label=f'Incorrect first class ({len(first_class_incorrect)/len(first_class)*100:.3f}%)', marker = 'o')
-        second_class_correct.plot.scatter(x='x', y='y', ax=axes, c='g', label=f'Correct second class ({len(second_class_correct)/len(second_class)*100:.3f}%)', marker = '*')
-        second_class_incorrect.plot.scatter(x='x', y='y', ax=axes, c='r', label=f'Incorrect second class ({len(second_class_incorrect)/len(second_class)*100:.3f}%)', marker = '*')
+        axes = first_class_correct.plot.scatter(x='x', y='y', c='g', label=f'Correct first class ({len(first_class_correct)/len(first_class)*100:.3f}%)', marker = 'x')
+        first_class_incorrect.plot.scatter(x='x', y='y', ax=axes, c='r', label=f'Incorrect first class ({len(first_class_incorrect)/len(first_class)*100:.3f}%)', marker = 'x')
+        second_class_correct.plot.scatter(x='x', y='y', ax=axes, c='g', label=f'Correct second class ({len(second_class_correct)/len(second_class)*100:.3f}%)', marker = 's')
+        second_class_incorrect.plot.scatter(x='x', y='y', ax=axes, c='r', label=f'Incorrect second class ({len(second_class_incorrect)/len(second_class)*100:.3f}%)', marker = 's')
 
         plt.title(title)
         if output_file_name is not None:
