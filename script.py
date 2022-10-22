@@ -35,7 +35,6 @@ network.add_network_layer(output_layer)
 data_manager = DataManager("classification/data.simple.test.100.csv", True)
 
 df = data_manager.get_data()
-
 DataVisualizer.visualize_data(df)
 
 network.learn(data_manager.get_training_data())
