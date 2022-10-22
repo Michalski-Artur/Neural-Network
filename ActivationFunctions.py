@@ -6,11 +6,11 @@ class ActivationFunctions:
 
     @staticmethod
     def sigmoid(x):
-        return 1 / (1 + e ** -x)
+        return 1.0 / (1.0 + e ** -x)
 
     @staticmethod
-    def sigmoid_derivative(x):
-        return ActivationFunctions.sigmoid(x)*(1-ActivationFunctions.sigmoid(x))
+    def sigmoid_derivative(output):
+        return output * (1.0 - output)
 
     @staticmethod
     def tanh(x):
