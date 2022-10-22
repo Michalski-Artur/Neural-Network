@@ -1,18 +1,16 @@
 import numpy as np
 import pandas as pd
+from graphviz import Digraph
 
 from Layer import Layer
 
 
 class Network:
-
-    learning_rate = 0
-    layers = []
-
-    def __init__(self, learning_rate, epoch_no, initial_seed, input_size):
+    def __init__(self, learning_rate: float, epoch_no: int, initial_seed: int, input_size: int):
         self.learning_rate = learning_rate
         self.epoch_no = epoch_no
         self.input_size = input_size
+        self.layers: list[Layer] = []
         np.random.seed(initial_seed)
 
     def add_network_layer(self, layer: Layer):
@@ -23,15 +21,15 @@ class Network:
         self.layers.append(layer)
         layer.set_weights(previous_layer_size)
 
-    def forward_pass(self, input: np.ndarray):
+    def forward_pass(self, input_value: np.ndarray):
         output = []
         for layer in self.layers:
             if layer.previous_layer_has_bias:
-                input = np.append(input, 1)
+                input_value = np.append(input_value, 1)
             output = []
             for neuron in layer.neurons:
-                output.append(neuron.calculate_output(input))
-            input = output
+                output.append(neuron.calculate_output(input_value))
+            input_value = output
         return output
 
     def backward_pass(self, expected_result):
@@ -40,30 +38,48 @@ class Network:
             for neuron in layer.neurons:
                 neuron.calculate_error(expected_result, next_layer)
 
-    def learn(self, training_set: pd.DataFrame):
+    def learn(self, training_set: pd.DataFrame, visualize: bool = False):
         current_iteration = 0
         while not self.stop_condition_met(current_iteration):
             current_iteration += 1
+            print(f'Epoch: {current_iteration}')
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:,-1]
-            for (input, expected_result) in zip(x_train, y_train):
-                print(f'Iteration: {current_iteration}' )
-                self.forward_pass(input)
+            for (input_value, expected_result) in zip(x_train, y_train):
+                self.forward_pass(input_value)
                 self.backward_pass(expected_result)
                 self.update_weights()
-        print(f'Finished learning after {current_iteration} iterations')
+            if visualize:
+                self.visualize_network(current_iteration)
+        print(f'Finished learning after {current_iteration-1} epochs')
 
     def stop_condition_met(self, current_iteration):
         # TODO: Maybe more conditions?
-        return current_iteration > self.epoch_no
+        return current_iteration >= self.epoch_no
 
     def compute(self, test_set: pd.DataFrame):
         output = []
         x_test = test_set.values[:, :-1]
-        for input in x_test:
-            output.append(self.forward_pass(input))
+        for input_value in x_test:
+            output.append(self.forward_pass(input_value))
         return output
 
     def update_weights(self):
         for layer in self.layers:
             layer.update_weights(self.learning_rate)
+
+    def visualize_network(self, epoch_number: int) -> None:
+        graph = Digraph('G', filename=f'output/network_{epoch_number}', format='png')
+        graph.attr('graph', pad='1', ranksep='5', nodesep='0.3', rankdir='LR')
+        graph.attr('node', shape='circle')
+        graph.attr('edge')
+        for i in range(self.input_size):
+            graph.node(f'0_{i}', f'Input_{i}')
+        for i, layer in enumerate(self.layers):
+            for j, neuron in enumerate(layer.neurons):
+                node_id = f'{i+1}_{j}'
+                label = f'Output_{j}' if i == len(self.layers) - 1 else ''
+                graph.node(node_id, label)
+                for k, weight in enumerate(neuron.weights):
+                    graph.edge(f'{i}_{k}', node_id, label=f'{weight:.4f}')
+        graph.render(view=False)

@@ -35,7 +35,16 @@ network.add_network_layer(output_layer)
 data_manager = DataManager("classification/data.simple.test.100.csv", True)
 
 df = data_manager.get_data()
-DataVisualizer.visualize_data(df)
+training_data = data_manager.get_training_data()
+network.learn(training_data)
 
-network.learn(data_manager.get_training_data())
-output = network.compute(data_manager.get_test_data())
+training_result = network.compute(training_data)
+training_data['cls_trained'] = [1 if x[0] > 0.5 else 0 for x in training_result]
+DataVisualizer.visualize_classification_data(training_data, 'Training data', 'output/training_data.png')
+
+test_data = data_manager.get_test_data()
+test_result = network.compute(test_data)
+test_data['cls_trained'] = [1 if x[0] > 0.5 else 0 for x in test_result]
+DataVisualizer.visualize_classification_data(test_data, 'Test data', 'output/test_data.png')
+
+# output = network.compute(data_manager.get_test_data())
