@@ -38,7 +38,7 @@ class Network:
             for neuron in layer.neurons:
                 neuron.calculate_error(expected_result, next_layer)
 
-    def learn(self, training_set: pd.DataFrame, visualize: bool = False):
+    def learn(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
         while not self.stop_condition_met(current_iteration):
             current_iteration += 1
@@ -51,7 +51,7 @@ class Network:
                 self.update_weights()
             if visualize:
                 self.visualize_network(current_iteration)
-        print(f'Finished learning after {current_iteration-1} epochs')
+        print(f'Finished learning after {current_iteration} epochs')
 
     def stop_condition_met(self, current_iteration):
         # TODO: Maybe more conditions?
@@ -70,7 +70,7 @@ class Network:
 
     def visualize_network(self, epoch_number: int) -> None:
         graph = Digraph('G', filename=f'output/network_{epoch_number}', format='png')
-        graph.attr('graph', pad='1', ranksep='5', nodesep='0.3', rankdir='LR')
+        graph.attr('graph', pad='1', ranksep='5', nodesep='0.3', label=f'Network in epoch {epoch_number}', labelloc='t', fontsize='50')
         graph.attr('node', shape='circle')
         graph.attr('edge')
         for i in range(self.input_size):
@@ -81,5 +81,5 @@ class Network:
                 label = f'Output_{j}' if i == len(self.layers) - 1 else ''
                 graph.node(node_id, label)
                 for k, weight in enumerate(neuron.weights):
-                    graph.edge(f'{i}_{k}', node_id, label=f'{weight:.4f}')
+                    graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={neuron.error:.4f}')
         graph.render(view=False)
