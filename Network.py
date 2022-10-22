@@ -40,7 +40,7 @@ class Network:
             for neuron in layer.neurons:
                 neuron.calculate_error(expected_result, next_layer)
 
-    def learn(self, training_set: pd.DataFrame):
+    def train(self, training_set: pd.DataFrame):
         current_iteration = 0
         while not self.stop_condition_met(current_iteration):
             current_iteration += 1
