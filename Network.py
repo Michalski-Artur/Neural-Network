@@ -46,6 +46,7 @@ class Network:
                 self.visualize(current_iteration)
             print(f'> epoch={current_iteration}, learning_rate={self.learning_rate:.3f}, error={sum_error:.3f}')
         print(f'Finished learning after {current_iteration} epochs')
+        self.visualize(current_iteration)
 
     def get_classification_result(self, test_set: pd.DataFrame) -> list[int]:
         predictions = []
@@ -72,7 +73,7 @@ class Network:
                 label = f'Output_{j}' if i == len(self.layers) - 1 else ''
                 graph.node(node_id, label)
                 for k, weight in enumerate(neuron.weights):
-                    graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={neuron.error:.4f}')
+                    graph.edge(f'{i}_{k}', node_id, label=f'w={weight:.4f}\ne={neuron.delta:.4f}')
         graph.render(view=False)
 
     def __forward_pass(self, input_value: np.ndarray) -> list[float]:
