@@ -1,50 +1,36 @@
 from ActivationFunctions import ActivationFunctions
 from DataVisualizer import DataVisualizer
 from DataManager import DataManager
-from Layer import Layer
 from Network import Network
-from Neuron import Neuron
+from network_enums import ProblemType
 
-network = Network(
-    learning_rate=0.1,
-    epoch_no=10,
-    initial_seed=1,
-    input_size=2
-)
+train_data_path = 'classification/data.simple.train.100.csv'
+test_data_path = 'classification/data.simple.test.100.csv'
+problem_type = ProblemType.CLASSIFICATION
+use_bias = False
+hidden_layers_count = 2
+hidden_layer_neurons_count = 10
+activation_function = ActivationFunctions.sigmoid
+initial_seed = 1
+learning_rate = 0.1
+epoch_max = 1
 
-basic_neuron = Neuron(
-    activation_function=ActivationFunctions.sigmoid,
-    activation_function_derivative=ActivationFunctions.sigmoid_derivative
-)
+ # Read data
+data_manager = DataManager(train_data_path, test_data_path, problem_type)
+data_manager.read_data()
+training_data = data_manager.training_data
+input_size = data_manager.get_input_size()
+output_layer_size = data_manager.get_output_layer_size()
 
-hidden_layer_neurons_count = 30
-hidden_layer = Layer(
-    neurons=[basic_neuron.copy_neuron() for _ in range(hidden_layer_neurons_count)],
-    previous_layer_has_bias=False
-)
-
-output_layer_neurons_count = 1
-output_layer = Layer(
-    neurons=[basic_neuron.copy_neuron() for _ in range(output_layer_neurons_count)],
-    previous_layer_has_bias=False
-)
-
-network.add_network_layer(hidden_layer)
-network.add_network_layer(output_layer)
-
-data_manager = DataManager("classification/data.simple.test.100.csv", True)
-
-df = data_manager.get_data()
-training_data = data_manager.get_training_data()
-network.learn(training_data)
+# Create network structure and train it
+network = Network(input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, initial_seed, learning_rate, epoch_max)
+network.learn(data_manager.training_data)
 
 training_result = network.compute(training_data)
-training_data['cls_trained'] = [1 if x[0] > 0.5 else 0 for x in training_result]
+training_data['cls_trained'] = training_result
 DataVisualizer.visualize_classification_data(training_data, 'Training data', 'output/training_data.png')
 
-test_data = data_manager.get_test_data()
+test_data = data_manager.testing_data
 test_result = network.compute(test_data)
-test_data['cls_trained'] = [1 if x[0] > 0.5 else 0 for x in test_result]
+test_data['cls_trained'] = test_result
 DataVisualizer.visualize_classification_data(test_data, 'Test data', 'output/test_data.png')
-
-# output = network.compute(data_manager.get_test_data())

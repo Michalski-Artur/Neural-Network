@@ -1,21 +1,15 @@
 from math import e
 from cmath import tanh
 
-
 class ActivationFunctions:
+    @staticmethod
+    def sigmoid(x_value: float, derivative = False) -> float:
+        if derivative:
+            return ActivationFunctions.sigmoid(x_value) * (1 - ActivationFunctions.sigmoid(x_value))
+        return 1 / (1 + e ** -x_value)
 
     @staticmethod
-    def sigmoid(x):
-        return 1 / (1 + e ** -x)
-
-    @staticmethod
-    def sigmoid_derivative(x):
-        return ActivationFunctions.sigmoid(x)*(1-ActivationFunctions.sigmoid(x))
-
-    @staticmethod
-    def tanh(x):
-        return tanh(x)
-
-    @staticmethod
-    def tanh_derivative(x):
-        return 1 - tanh(x) ** 2
+    def tanh(x_value: float, derivative = False) -> float:
+        if derivative:
+            return 1 - tanh(x_value) ** 2
+        return tanh(x_value)

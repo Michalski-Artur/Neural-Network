@@ -1,30 +1,25 @@
 import pandas as pd
 
+from network_enums import ProblemType
 
 class DataManager:
-
-    def __init__(self, filename, is_classification, training_frac=0.8, random_state=10):
-        self.is_classification = None
-        self.training_frac = training_frac
-        self.random_state = random_state
+    def __init__(self, train_data_path: str, test_data_path: str, problem_type: ProblemType) -> None:
+        self.__train_data_path = train_data_path
+        self.__test_data_path = test_data_path
+        self.__problem_type = problem_type
         self.testing_data = None
         self.training_data = None
-        self.data = None
-        self.read_file(filename, is_classification)
 
-    def read_file(self, filename, is_classification):
-        self.data = pd.read_csv(filename)
-        self.is_classification = is_classification
-        self.training_data = self.data.sample(frac=self.training_frac, random_state=self.random_state)
-        self.training_data.itertuples()
-        self.testing_data = self.data.drop(self.training_data.index)
-        return self.data
+    def read_data(self) -> pd.DataFrame:
+        self.training_data = pd.read_csv(self.__train_data_path)
+        self.testing_data = pd.read_csv(self.__test_data_path)
+        return (self.training_data, self.testing_data)
 
-    def get_data(self):
-        return self.data
+    def get_input_size(self) -> int:
+        return len(self.training_data.columns) - 1
 
-    def get_training_data(self):
-        return self.training_data
-
-    def get_test_data(self):
-        return self.testing_data
+    def get_output_layer_size(self) -> int:
+        if self.__problem_type == ProblemType.CLASSIFICATION:
+            return self.training_data.iloc[:, -1].max()
+        elif self.__problem_type == ProblemType.REGRESSION:
+            return 1
