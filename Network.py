@@ -47,11 +47,14 @@ class Network:
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:,-1]
             for (input, expected_result) in zip(x_train, y_train):
+                print(f'Iteration: {current_iteration}' )
                 self.forward_pass(input)
                 self.backward_pass(expected_result)
                 self.update_weights()
+        print(f'Finished learning after {current_iteration} iterations')
 
     def stop_condition_met(self, current_iteration):
+        # TODO: Maybe more conditions?
         return current_iteration > self.epoch_no
 
     def compute(self, test_set: pd.DataFrame):
