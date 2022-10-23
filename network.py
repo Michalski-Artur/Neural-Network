@@ -14,7 +14,6 @@ class Network:
         self.__learning_rate = learning_rate
         self.__epoch_no = epoch_max
         self.__input_size = input_size
-        self.__error_function = error_function
         np.random.seed(initial_seed)
         basic_neuron = Neuron(activation_function, error_function)
         self.__layers: list[Layer] = []
@@ -82,7 +81,7 @@ class Network:
                     prev_node_id = f'{i}_{k}'
                     if layer.previous_layer_has_bias and k == len(neuron.weights) - 1:
                         graph.node(prev_node_id, f'Bias{i}')
-                    graph.edge(prev_node_id, node_id, label=f'w={weight:.4f}\ne={weight * neuron.delta:.4f}')
+                    graph.edge(prev_node_id, node_id, label=f'w={weight:.4f}\ne={neuron.delta:.4f}')
         graph.render(view=view)
 
     def __forward_pass(self, input_value: np.ndarray) -> list[float]:
