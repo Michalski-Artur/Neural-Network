@@ -34,7 +34,7 @@ class Network:
 
     def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
-        mean_error = 1.0
+        mean_error = self.__error_threshold
         while not self.__stop_condition_met(current_iteration, mean_error):
             current_iteration += 1
             if current_iteration == self.__epoch_no:
