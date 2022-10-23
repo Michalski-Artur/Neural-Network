@@ -5,7 +5,8 @@ class ActivationFunctions:
     @staticmethod
     def sigmoid(x_value: float, derivative: bool = False) -> float:
         if derivative:
-            return x_value * (1.0 - x_value)
+            value = ActivationFunctions.sigmoid(x_value)
+            return value * (1.0 - value)
         return 1.0 / (1.0 + e ** -x_value)
 
     @staticmethod

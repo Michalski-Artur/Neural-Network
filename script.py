@@ -1,3 +1,4 @@
+import math
 from activation_functions import ActivationFunctions
 from data_visualizer import DataVisualizer
 from data_manager import DataManager
@@ -9,7 +10,6 @@ test_data_path = 'classification/data.simple.test.100.csv'
 problem_type = ProblemType.CLASSIFICATION
 use_bias = False
 hidden_layers_count = 1
-hidden_layer_neurons_count = 2
 activation_function = ActivationFunctions.sigmoid
 initial_seed = 1
 learning_rate = 0.1
@@ -22,6 +22,7 @@ data_manager.read_data()
 training_data = data_manager.training_data
 input_size = data_manager.get_input_size()
 output_layer_size = data_manager.get_output_layer_size()
+hidden_layer_neurons_count = math.isqrt(input_size * output_layer_size)
 
 # Create network structure and train it
 network = Network(input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, initial_seed, learning_rate, epoch_max)
