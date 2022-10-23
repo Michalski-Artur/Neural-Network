@@ -11,11 +11,11 @@ test_data_path = 'classification/data.simple.test.1000.csv'
 problem_type = ProblemType.CLASSIFICATION
 use_bias = True
 hidden_layers_count = 1
-activation_function = ActivationFunctions.tanh
-error_function = ErrorFunctions.mean_squared
+activation_function = ActivationFunctions.sigmoid
+error_function = ErrorFunctions.cross_entropy_error
 initial_seed = 1
 learning_rate = 0.1
-epoch_max = 100
+epoch_max = 50
 visualize_epochs = False
 
  # Read data

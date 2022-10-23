@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from graphviz import Digraph
-from activation_functions import ActivationFunctionType
+from activation_functions import ActivationFunctionType, ActivationFunctions
 from error_functions import ErrorFunctionType
 
 from layer import Layer
@@ -15,6 +15,7 @@ class Network:
         self.__epoch_no = epoch_max
         self.__input_size = input_size
         self.__error_function = error_function
+        self.__error_threshold = 1e-6
         np.random.seed(initial_seed)
         basic_neuron = Neuron(activation_function, error_function)
         self.__layers: list[Layer] = []
@@ -33,38 +34,38 @@ class Network:
 
     def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
-        while not self.__stop_condition_met(current_iteration):
+        mean_error = 1.0
+        while not self.__stop_condition_met(current_iteration, mean_error):
             current_iteration += 1
+            if current_iteration == self.__epoch_no:
+                pass
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
-            sum_error = 0
+            mean_error = 0.0
             input_value: np.ndarray
             expected_result: float
+            sample_len = len(x_train)
             for (input_value, expected_result) in zip(x_train, y_train):
                 outputs = self.__forward_pass(input_value)
                 expected = [0 for _ in range(len(outputs))]
                 expected[int(expected_result) - 1] = 1
-                sum_error += self.__error_function(outputs[int(expected_result) - 1], 1)
+                mean_error += self.__error_function(outputs[int(expected_result) - 1], 1) / sample_len
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
-            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error (classification)= {sum_error.real/len(x_train):.3g}')
-        print(f'Finished learning after reaching limit of {current_iteration} epochs')
+            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error (classification)= {mean_error:.3g}')
         if not visualize:
             self.visualize(current_iteration, True)
 
     def get_classification_result(self, test_set: pd.DataFrame) -> list[int]:
         predictions = []
-        x_test, y_test = test_set.values[:, :-1], test_set.values[:, -1]
+        x_test = test_set.values[:, :-1]
         input_value: np.ndarray
-        expected: float
-        for (input_value, expected) in zip(x_test, y_test):
+        for input_value in x_test:
             output = self.__forward_pass(input_value)
             prediction = output.index(max(output)) + 1
             predictions.append(prediction)
-            if expected != prediction:
-                print(f'Wrong result: expected {int(expected)} but got {prediction}')
         return predictions
 
     def visualize(self, epoch_number: int, view: bool = False) -> None:
@@ -83,17 +84,15 @@ class Network:
                     prev_node_id = f'{i}_{k}'
                     if layer.previous_layer_has_bias and k == len(neuron.weights) - 1:
                         graph.node(prev_node_id, f'Bias{i}')
-                    graph.edge(prev_node_id, node_id, label=f'w={weight:.4f}\ne={neuron.delta:.4f}')
+                    graph.edge(prev_node_id, node_id, label=f'w={weight:.4g}\ne={neuron.delta:.4g}')
         graph.render(view=view)
 
     def __forward_pass(self, input_value: np.ndarray) -> list[float]:
         output = []
-        for layer in self.__layers:
+        for (layer_index, layer) in enumerate(self.__layers):
             if layer.previous_layer_has_bias:
                 input_value = np.append(input_value, 1)
-            output = []
-            for neuron in layer.neurons:
-                output.append(neuron.calculate_output(input_value))
+            output = layer.calculate_output(input_value, layer_index == len(self.__layers) - 1)
             input_value = output
         return output
 
@@ -103,9 +102,14 @@ class Network:
             for neuron in layer.neurons:
                 neuron.calculate_error(expected_result, next_layer)
 
-    def __stop_condition_met(self, current_iteration: int) -> bool:
-        # TODO: Maybe more conditions?
-        return current_iteration >= self.__epoch_no
+    def __stop_condition_met(self, current_iteration: int, mean_error: float) -> bool:
+        if current_iteration >= self.__epoch_no:
+            print(f'Finished learning after reaching limit of {current_iteration} epochs')
+            return True
+        elif abs(mean_error) < self.__error_threshold:
+            print(f'Early stopping at epoch {current_iteration} due to error {mean_error:.4g} < {self.__error_threshold}')
+            return True
+        return False
 
     def __update_weights(self) -> None:
         for layer in self.__layers:

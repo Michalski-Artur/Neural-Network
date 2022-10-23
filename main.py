@@ -71,14 +71,14 @@ def __parse_activation_function(activation_function: str) -> ActivationFunctionT
 
 def __parse_error_function(error_function: str) -> ErrorFunctionType:
     if error_function == 'cross_entropy':
-        return ErrorFunctions.cross_entropy
+        return ErrorFunctions.cross_entropy_error
     elif error_function == 'mean_squared':
-        return ErrorFunctions.mean_squared
+        return ErrorFunctions.mean_squared_error
     elif error_function == 'mean_absolute':
-        return ErrorFunctions.mean_absolute
+        return ErrorFunctions.mean_absolute_error
     else:
         print('Error function not supported, using cross_entropy')
-        return ErrorFunctions.cross_entropy
+        return ErrorFunctions.cross_entropy_error
 
 if __name__ == "__main__":
     __main__()

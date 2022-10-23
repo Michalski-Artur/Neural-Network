@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import dot, ndarray
 
-from activation_functions import ActivationFunctionType
+from activation_functions import ActivationFunctionType, ActivationFunctions
 from error_functions import ErrorFunctionType
 
 
@@ -27,19 +27,19 @@ class Neuron:
     def get_weights(self) -> list[float]:
         return self.weights
 
-    def calculate_output(self, input_value: ndarray) -> float:
+    def calculate_output(self, input_value: ndarray, new_output: float = None) -> float:
         self.__input = input_value
-        self.__output: float = self.__activation_function(dot(self.weights, input_value))
+        self.__output: float = self.__activation_function(dot(self.weights, input_value)) if new_output is None else new_output
         return self.__output
 
     # Based on: https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/
     def calculate_error(self, expected_output: list[float], next_layer) -> float:
         error = 0
         if next_layer is None:
-            error = -self.__error_function(self.__output, expected_output[self.neuron_index_in_layer], True)
+            error = self.__error_function(self.__output, expected_output[self.neuron_index_in_layer], True)
         else:
             for neuron in next_layer.neurons:
-                error = neuron.weights[self.neuron_index_in_layer] * neuron.delta
+                error += neuron.weights[self.neuron_index_in_layer] * neuron.delta
         self.delta = error * self.__activation_function(self.__output, True)
         return self.delta
 
