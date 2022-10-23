@@ -1,17 +1,22 @@
 import numpy as np
 import pandas as pd
 from graphviz import Digraph
+from activation_functions import ActivationFunctionType
+from error_functions import ErrorFunctionType
 
 from layer import Layer
 from neuron import Neuron
 
 class Network:
-    def __init__(self, input_size: int, output_size: int, use_bias: bool, hidden_layers_count: int, hidden_layer_neurons_count: int, activation_function: callable, initial_seed: int, learning_rate: float, epoch_max: int) -> None:
+    def __init__(self, input_size: int, output_size: int, use_bias: bool, hidden_layers_count: int, hidden_layer_neurons_count: int,
+                activation_function: ActivationFunctionType, error_function: ErrorFunctionType, initial_seed: int, learning_rate: float, epoch_max: int) -> None:
+
         self.__learning_rate = learning_rate
         self.__epoch_no = epoch_max
         self.__input_size = input_size
+        self.__error_function = error_function
         np.random.seed(initial_seed)
-        basic_neuron = Neuron(activation_function)
+        basic_neuron = Neuron(activation_function, error_function)
         self.__layers: list[Layer] = []
         hidden_layers = [Layer([basic_neuron.copy_neuron() for _ in range(hidden_layer_neurons_count)], use_bias) for _ in range(hidden_layers_count)]
         output_layer = Layer([basic_neuron.copy_neuron() for _ in range(output_size)], use_bias)
@@ -37,9 +42,9 @@ class Network:
             expected_result: float
             for (input_value, expected_result) in zip(x_train, y_train):
                 outputs = self.__forward_pass(input_value)
-                expected = [0 for i in range(len(outputs))]
+                expected = [0 for _ in range(len(outputs))]
                 expected[int(expected_result) - 1] = 1
-                sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))]) # TODO: This error probably doesn't correspond with calculated one?
+                # sum_error += sum([self.__error_function(outputs[i], expected[i], True) for i in range(len(expected))]) # TODO: This error probably doesn't correspond with calculated one?
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:

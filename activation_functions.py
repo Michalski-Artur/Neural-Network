@@ -1,5 +1,8 @@
 from math import e
 from cmath import tanh
+from typing import Callable, Optional
+
+ActivationFunctionType = Callable[[float, Optional[bool]], float]
 
 class ActivationFunctions:
     @staticmethod

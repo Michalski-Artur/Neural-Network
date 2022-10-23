@@ -1,8 +1,9 @@
 import sys
 
-from activation_functions import ActivationFunctions
+from activation_functions import ActivationFunctionType, ActivationFunctions
 from data_manager import DataManager
 from data_visualizer import DataVisualizer
+from error_functions import ErrorFunctionType, ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
@@ -41,7 +42,7 @@ def __main__() -> None:
     output_layer_size = data_manager.get_output_layer_size()
 
     # Create network structure and train it
-    network = Network(input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, initial_seed, LEARNING_RATE, EPOCH_MAX)
+    network = Network(input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, error_function, initial_seed, LEARNING_RATE, EPOCH_MAX)
     training_data = data_manager.training_data
     network.train(training_data, visualize_epochs)
     training_result = network.get_classification_result(training_data)
@@ -59,7 +60,7 @@ def __parse_problem_type(problem_type: str) -> any:
     else:
         raise ValueError('Supplied problem type not supported (use \'c\' for classification or \'r\' for regression)')
 
-def __parse_activation_function(activation_function: str) -> ActivationFunctions:
+def __parse_activation_function(activation_function: str) -> ActivationFunctionType:
     if activation_function == 'sigmoid':
         return ActivationFunctions.sigmoid
     elif activation_function == 'tanh':
@@ -68,13 +69,16 @@ def __parse_activation_function(activation_function: str) -> ActivationFunctions
         print('Activation function not supported, using sigmoid')
         return ActivationFunctions.sigmoid
 
-def __parse_error_function(error_function: str) -> any:
-    raise NotImplementedError('Method not implemented')
-    # if error_function == 'cross_entropy':
-    #     return ActivationFunctions.cross_entropy
-    # else:
-    #     print('Error function not supported, using cross_entropy')
-    #     return ActivationFunctions.cross_entropy
+def __parse_error_function(error_function: str) -> ErrorFunctionType:
+    if error_function == 'cross_entropy':
+        return ErrorFunctions.cross_entropy
+    elif error_function == 'mean_squared':
+        return ErrorFunctions.mean_squared
+    elif error_function == 'mean_absolute':
+        return ErrorFunctions.mean_absolute
+    else:
+        print('Error function not supported, using cross_entropy')
+        return ErrorFunctions.cross_entropy
 
 if __name__ == "__main__":
     __main__()
