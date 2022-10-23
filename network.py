@@ -43,13 +43,12 @@ class Network:
                 outputs = self.__forward_pass(input_value)
                 expected = [0 for _ in range(len(outputs))]
                 expected[int(expected_result) - 1] = 1
-                # sum_error += sum([self.__error_function(outputs[i], expected[i], True) for i in range(len(expected))]) # TODO: This error probably doesn't correspond with calculated one?
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
-            print(f'> epoch={current_iteration}, learning_rate={self.__learning_rate:.3f}, error={sum_error:.3f}')
-        print(f'Finished learning after {current_iteration} epochs')
+            print(f'Epoch={current_iteration}')
+        print(f'Finished learning after reaching limit of {current_iteration} epochs')
         if not visualize:
             self.visualize(current_iteration, True)
 
@@ -62,7 +61,8 @@ class Network:
             output = self.__forward_pass(input_value)
             prediction = output.index(max(output)) + 1
             predictions.append(prediction)
-            print(f'Expected={int(expected)}, Got={prediction}')
+            if expected != prediction:
+                print(f'Wrong result: expected {int(expected)} but got {prediction}')
         return predictions
 
     def visualize(self, epoch_number: int, view: bool = False) -> None:
