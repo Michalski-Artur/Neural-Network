@@ -34,7 +34,6 @@ class Network:
         current_iteration = 0
         while not self.__stop_condition_met(current_iteration):
             current_iteration += 1
-            sum_error = 0
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
             input_value: np.ndarray
@@ -47,7 +46,7 @@ class Network:
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
-            print(f'Epoch={current_iteration}')
+            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no})')
         print(f'Finished learning after reaching limit of {current_iteration} epochs')
         if not visualize:
             self.visualize(current_iteration, True)
