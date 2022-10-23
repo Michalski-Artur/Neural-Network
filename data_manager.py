@@ -10,7 +10,7 @@ class DataManager:
         self.testing_data = None
         self.training_data = None
 
-    def read_data(self) -> pd.DataFrame:
+    def read_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         self.training_data = pd.read_csv(self.__train_data_path)
         self.testing_data = pd.read_csv(self.__test_data_path)
         return (self.training_data, self.testing_data)

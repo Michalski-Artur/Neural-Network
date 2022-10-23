@@ -1,3 +1,4 @@
+import math
 import sys
 
 from activation_functions import ActivationFunctionType, ActivationFunctions
@@ -11,7 +12,6 @@ LEARNING_RATE = 0.1
 EPOCH_MAX = 1
 INTIIAL_SEED = 1
 HIDDEN_LAYERS_COUNT = 2
-HIDDEN_LAYER_NEURONS_COUNT = 10
 
 
 def __main__() -> None:
@@ -29,7 +29,6 @@ def __main__() -> None:
     # Below are the arguments that should have default values
     visualize_epochs = sys.argv[4] = bool(sys.argv[4]) or False
     hidden_layers_count = int(sys.argv[5]) or HIDDEN_LAYERS_COUNT
-    hidden_layer_neurons_count = int(sys.argv[6]) or HIDDEN_LAYER_NEURONS_COUNT
     use_bias = bool(sys.argv[7]) or True
     activation_function = __parse_activation_function(sys.argv[8])
     error_function = __parse_error_function(sys.argv[9])
@@ -40,6 +39,7 @@ def __main__() -> None:
     data_manager.read_data()
     input_size = data_manager.get_input_size()
     output_layer_size = data_manager.get_output_layer_size()
+    hidden_layer_neurons_count = int(sys.argv[6]) or math.isqrt(input_size * output_layer_size)
 
     # Create network structure and train it
     network = Network(input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, error_function, initial_seed, LEARNING_RATE, EPOCH_MAX)
