@@ -3,10 +3,12 @@ import pandas as pd
 from graphviz import Digraph
 
 from layer import Layer
+from network_enums import ProblemType
 from neuron import Neuron
 
 class Network:
-    def __init__(self, input_size: int, output_size: int, use_bias: bool, hidden_layers_count: int, hidden_layer_neurons_count: int, activation_function: callable, initial_seed: int, learning_rate: float, epoch_max: int) -> None:
+    def __init__(self, problem_type: ProblemType, input_size: int, output_size: int, use_bias: bool, hidden_layers_count: int, hidden_layer_neurons_count: int, activation_function: callable, initial_seed: int, learning_rate: float, epoch_max: int) -> None:
+        self.__problem_type = problem_type
         self.__learning_rate = learning_rate
         self.__epoch_no = epoch_max
         self.__input_size = input_size
@@ -37,9 +39,15 @@ class Network:
             expected_result: float
             for (input_value, expected_result) in zip(x_train, y_train):
                 outputs = self.__forward_pass(input_value)
-                expected = [0 for i in range(len(outputs))]
-                expected[int(expected_result) - 1] = 1
-                sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))]) # TODO: This error probably doesn't correspond with calculated one?
+                expected = None
+                if self.__problem_type is ProblemType.CLASSIFICATION:
+                    expected = [0 for i in range(len(outputs))]
+                    expected[int(expected_result) - 1] = 1
+                elif self.__problem_type is ProblemType.REGRESSION:
+                    expected = [expected_result]
+                else:
+                    raise Exception('Not supported problem type')
+                sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))])
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
@@ -49,16 +57,24 @@ class Network:
         if not visualize:
             self.visualize(current_iteration, True)
 
-    def get_classification_result(self, test_set: pd.DataFrame) -> list[int]:
+    def predict(self, test_set: pd.DataFrame) -> list[int]:
         predictions = []
         x_test, y_test = test_set.values[:, :-1], test_set.values[:, -1]
         input_value: np.ndarray
         expected: float
         for (input_value, expected) in zip(x_test, y_test):
             output = self.__forward_pass(input_value)
-            prediction = output.index(max(output)) + 1
+            prediction = None
+            if self.__problem_type is ProblemType.REGRESSION:
+                prediction = output
+                print(f'Expected={expected}, Got={prediction}')
+            elif self.__problem_type is ProblemType.CLASSIFICATION:
+                prediction = output.index(max(output)) + 1
+                print(f'Expected={int(expected)}, Got={prediction}')
+            else:
+                raise Exception('Not supported problem type')
             predictions.append(prediction)
-            print(f'Expected={int(expected)}, Got={prediction}')
+
         return predictions
 
     def visualize(self, epoch_number: int, view: bool = False) -> None:
@@ -104,3 +120,6 @@ class Network:
     def __update_weights(self) -> None:
         for layer in self.__layers:
             layer.update_weights(self.__learning_rate)
+
+    def get_neuron_weights(self, layer_index, neuron_index):
+        return self.__layers[layer_index].neurons[neuron_index].weights

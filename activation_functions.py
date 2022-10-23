@@ -1,7 +1,13 @@
 from math import e
 from cmath import tanh
 
+
 class ActivationFunctions:
+
+    @staticmethod
+    def identity(x_value: float, derivative: bool = False) -> float:
+        return 1.0 if derivative else x_value
+
     @staticmethod
     def sigmoid(x_value: float, derivative: bool = False) -> float:
         if derivative:
