@@ -14,6 +14,7 @@ class Network:
         self.__learning_rate = learning_rate
         self.__epoch_no = epoch_max
         self.__input_size = input_size
+        self.__error_function = error_function
         np.random.seed(initial_seed)
         basic_neuron = Neuron(activation_function, error_function)
         self.__layers: list[Layer] = []
@@ -36,17 +37,19 @@ class Network:
             current_iteration += 1
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
+            sum_error = 0
             input_value: np.ndarray
             expected_result: float
             for (input_value, expected_result) in zip(x_train, y_train):
                 outputs = self.__forward_pass(input_value)
                 expected = [0 for _ in range(len(outputs))]
                 expected[int(expected_result) - 1] = 1
+                sum_error += self.__error_function(outputs[int(expected_result) - 1], 1)
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
-            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no})')
+            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error (classification)= {sum_error.real/len(x_train):.3f}')
         print(f'Finished learning after reaching limit of {current_iteration} epochs')
         if not visualize:
             self.visualize(current_iteration, True)
