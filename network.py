@@ -49,7 +49,7 @@ class Network:
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
-            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error (classification)= {sum_error.real/len(x_train):.3f}')
+            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error (classification)= {sum_error.real/len(x_train):.3g}')
         print(f'Finished learning after reaching limit of {current_iteration} epochs')
         if not visualize:
             self.visualize(current_iteration, True)

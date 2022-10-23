@@ -12,10 +12,10 @@ problem_type = ProblemType.CLASSIFICATION
 use_bias = True
 hidden_layers_count = 1
 activation_function = ActivationFunctions.tanh
-error_function = ErrorFunctions.cross_entropy
+error_function = ErrorFunctions.mean_squared
 initial_seed = 1
 learning_rate = 0.1
-epoch_max = 50
+epoch_max = 100
 visualize_epochs = False
 
  # Read data
