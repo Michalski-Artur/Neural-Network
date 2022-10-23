@@ -2,6 +2,7 @@ import math
 from activation_functions import ActivationFunctions
 from data_visualizer import DataVisualizer
 from data_manager import DataManager
+from error_functions import ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
@@ -12,7 +13,7 @@ use_bias = True
 hidden_layers_count = 0
 hidden_layer_neurons_count = 1
 activation_function = ActivationFunctions.identity
-
+error_function = ErrorFunctions.mean_squared_error
 initial_seed = 1
 learning_rate = 0.01
 epoch_max = 5000
@@ -27,7 +28,18 @@ output_layer_size = data_manager.get_output_layer_size()
 hidden_layer_neurons_count = math.isqrt(input_size * output_layer_size)
 
 # Create network structure and train it
-network = Network(problem_type, input_size, output_layer_size, use_bias, hidden_layers_count, hidden_layer_neurons_count, activation_function, initial_seed, learning_rate, epoch_max)
+network = Network(
+    problem_type=problem_type,
+    input_size=input_size,
+    output_size=output_layer_size,
+    use_bias=use_bias,
+    hidden_layers_count=hidden_layers_count,
+    hidden_layer_neurons_count=hidden_layer_neurons_count,
+    activation_function=activation_function,
+    error_function=error_function,
+    initial_seed=initial_seed,
+    learning_rate=learning_rate,
+    epoch_max=epoch_max)
 network.train(data_manager.training_data, visualize_epochs)
 
 training_result = network.predict(training_data)
