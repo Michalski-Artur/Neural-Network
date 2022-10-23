@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from graphviz import Digraph
-from activation_functions import ActivationFunctionType, ActivationFunctions
+from activation_functions import ActivationFunctionType
 from error_functions import ErrorFunctionType
 
 from layer import Layer
