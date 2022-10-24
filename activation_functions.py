@@ -1,10 +1,8 @@
 from typing import Callable, Optional
 from math import e
-from cmath import tanh
-from numpy import exp
+import numpy as np
 
 ActivationFunctionType = Callable[[float, Optional[bool]], float]
-
 
 class ActivationFunctions:
 
@@ -24,9 +22,9 @@ class ActivationFunctions:
         # x_value is tanh(x) for derivative
         if derivative:
             return 1 - x_value ** 2
-        return tanh(x_value).real
+        return np.tanh(x_value).real
 
     @staticmethod
     def softmax_vector(x_vector: list[float]) -> list[float]:
-        val = exp(x_vector)
+        val = np.exp(x_vector)
         return list(val / val.sum())

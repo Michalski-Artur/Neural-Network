@@ -45,4 +45,5 @@ class Neuron:
 
     def update_weights(self, learning_rate: float) -> None:
         delta_weights = np.multiply(self.__input, self.delta * learning_rate)
-        self.weights = np.clip(np.add(self.weights, -delta_weights), -10, 10)
+        # self.weights = np.add(self.weights, -delta_weights)
+        self.weights = np.clip(np.add(self.weights, -delta_weights), -1e5, 1e5)
