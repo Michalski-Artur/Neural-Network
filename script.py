@@ -12,8 +12,8 @@ problem_type = ProblemType.REGRESSION
 use_bias = True
 hidden_layers_count = 0
 hidden_layer_neurons_count = 1
-activation_function = ActivationFunctions.sigmoid
-error_function = ErrorFunctions.mean_squared_error
+activation_function = ActivationFunctions.identity
+error_function = ErrorFunctions.cross_entropy_error
 initial_seed = 1
 learning_rate = 0.01
 epoch_max = 100
@@ -52,4 +52,4 @@ DataVisualizer.visualize_data(problem_type, test_data, test_result, 'Test data',
 # Linear regression coefficients
 if problem_type == ProblemType.REGRESSION:
     (a, b) = network.get_neuron_weights(-1, -1)
-    print(f'Linear regression coefficients: a = {a:.4g}, b = {b:.4g}')
+    print(f'Linear regression coefficients: a = {a:.3f}, b = {b:.3f}')
