@@ -1,5 +1,4 @@
 from typing import Callable, Optional
-from math import e
 import numpy as np
 
 ActivationFunctionType = Callable[[float, Optional[bool]], float]
@@ -15,7 +14,7 @@ class ActivationFunctions:
         # x_value is sigmoid(x) for derivative
         if derivative:
             return x_value * (1.0 - x_value)
-        return 1.0 / (1.0 + e ** -x_value)
+        return 1.0 / (1.0 + np.e ** -x_value)
 
     @staticmethod
     def tanh(x_value: float, derivative = False) -> float:
