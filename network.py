@@ -34,13 +34,14 @@ class Network:
         self.__layers.append(layer)
         layer.set_weights(previous_layer_size)
 
+    def get_neuron_weights(self, layer_index, neuron_index):
+        return self.__layers[layer_index].neurons[neuron_index].weights
+
     def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
         mean_error = self.__error_threshold
         while not self.__stop_condition_met(current_iteration, mean_error):
             current_iteration += 1
-            if current_iteration == self.__epoch_no:
-                pass
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
             mean_error = 0.0
@@ -51,12 +52,12 @@ class Network:
                 outputs = self.__forward_pass(input_value)
                 expected = None
                 if self.__problem_type is ProblemType.CLASSIFICATION:
-                    expected = [0 for i in range(len(outputs))]
+                    expected = [0 for _ in range(len(outputs))]
                     expected[int(expected_result) - 1] = 1
                     mean_error += self.__error_function(outputs[int(expected_result) - 1], 1) / sample_len
                 elif self.__problem_type is ProblemType.REGRESSION:
                     expected = [expected_result]
-                    mean_error = self.__error_threshold
+                    mean_error += self.__error_function(outputs[0], expected_result) / sample_len
                 else:
                     raise Exception('Not supported problem type')
                 self.__backward_pass(expected)
@@ -67,7 +68,7 @@ class Network:
         if not visualize:
             self.visualize(current_iteration, True)
 
-    def predict(self, test_set: pd.DataFrame) -> list[int]:
+    def predict(self, test_set: pd.DataFrame) -> list[float]:
         predictions = []
         x_test = test_set.values[:, :-1]
         y_test = test_set.values[:, -1]
@@ -76,14 +77,13 @@ class Network:
             output = self.__forward_pass(input_value)
             prediction = None
             if self.__problem_type is ProblemType.REGRESSION:
-                prediction = output
+                prediction = output[0]
                 print(f'Expected={expected}, Got={prediction}')
             elif self.__problem_type is ProblemType.CLASSIFICATION:
                 prediction = output.index(max(output)) + 1
             else:
                 raise Exception('Not supported problem type')
             predictions.append(prediction)
-
         return predictions
 
     def visualize(self, epoch_number: int, view: bool = False) -> None:
@@ -110,7 +110,7 @@ class Network:
         for (layer_index, layer) in enumerate(self.__layers):
             if layer.previous_layer_has_bias:
                 input_value = np.append(input_value, 1)
-            output = layer.calculate_output(input_value, layer_index == len(self.__layers) - 1)
+            output = layer.calculate_output(input_value, self.__problem_type, layer_index == len(self.__layers) - 1)
             input_value = output
         return output
 
@@ -133,5 +133,9 @@ class Network:
         for layer in self.__layers:
             layer.update_weights(self.__learning_rate)
 
-    def get_neuron_weights(self, layer_index, neuron_index):
-        return self.__layers[layer_index].neurons[neuron_index].weights
+    # Uncomment this function if ever needed (but also has to be fixed)
+    # def __scale_regression_data(self, data: pd.DataFrame) -> tuple[pd.DataFrame, float]:
+    #     scale = abs(max(data.max().max(), data.min().min(), key=abs))
+    #     new_data = data / scale
+
+    #     return (new_data, scale)
