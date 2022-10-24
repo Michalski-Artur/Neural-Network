@@ -39,12 +39,12 @@ class Network:
 
     def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
-        mean_error = self.__error_threshold
-        while not self.__stop_condition_met(current_iteration, mean_error):
+        sum_error = self.__error_threshold
+        while not self.__stop_condition_met(current_iteration, sum_error):
             current_iteration += 1
             training_set = training_set.sample(frac=1)  # shuffle training set
             x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
-            mean_error = 0.0
+            sum_error = 0.0
             input_value: np.ndarray
             expected_result: float
             sample_len = len(x_train)
@@ -54,17 +54,17 @@ class Network:
                 if self.__problem_type is ProblemType.CLASSIFICATION:
                     expected = [0 for _ in range(len(outputs))]
                     expected[int(expected_result) - 1] = 1
-                    mean_error += self.__error_function(outputs[int(expected_result) - 1], 1) / sample_len
+                    sum_error += self.__error_function(outputs[int(expected_result) - 1], 1)
                 elif self.__problem_type is ProblemType.REGRESSION:
                     expected = [expected_result]
-                    mean_error += self.__error_function(outputs[0], expected_result) / sample_len
+                    sum_error += self.__error_function(outputs[0], expected_result)
                 else:
                     raise Exception('Not supported problem type')
                 self.__backward_pass(expected)
                 self.__update_weights()
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
-            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error ({self.__problem_type.name.lower()})= {mean_error:.3g}')
+            print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error ({self.__problem_type.name.lower()})= {sum_error/sample_len:.3g}')
         if not visualize:
             self.visualize(current_iteration, True)
 
