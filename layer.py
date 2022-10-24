@@ -1,4 +1,5 @@
-from numpy import random
+import numpy as np
+from activation_functions import ActivationFunctions
 from neuron import Neuron
 
 
@@ -18,4 +19,12 @@ class Layer:
 
     def set_weights(self, previous_layer_size: int) -> None:
         for neuron in self.neurons:
-            neuron.set_weights((random.rand(previous_layer_size).tolist()))
+            neuron.set_weights((np.random.rand(previous_layer_size).tolist()))
+
+    def calculate_output(self, input_value: list[float], is_output: bool) -> list[float]:
+        if is_output:
+            output = ActivationFunctions.softmax_vector([np.dot(neuron.get_weights(), input_value) for neuron in self.neurons])
+            output = [neuron.calculate_output(input_value, output[neuron.neuron_index_in_layer]) for neuron in self.neurons]
+        else:
+            output = [neuron.calculate_output(input_value) for neuron in self.neurons]
+        return output
