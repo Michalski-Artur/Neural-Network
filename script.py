@@ -6,16 +6,16 @@ from error_functions import ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
-train_data_path = 'classification/data.simple.train.1000.csv'
-test_data_path = 'classification/data.simple.test.1000.csv'
+train_data_path = 'classification/data.three_gauss.train.1000.csv'
+test_data_path = 'classification/data.three_gauss.test.1000.csv'
 problem_type = ProblemType.CLASSIFICATION
 use_bias = True
-hidden_layers_count = 0
-hidden_layer_neurons_count = 1
-activation_function = ActivationFunctions.tanh
-error_function = ErrorFunctions.mean_squared_error
+hidden_layers_count = 1
+hidden_layer_neurons_count = 2
+activation_function = ActivationFunctions.sigmoid
+error_function = ErrorFunctions.cross_entropy_error
 initial_seed = 1
-learning_rate = 0.01
+learning_rate = 0.001
 epoch_max = 100
 visualize_epochs = False
 
