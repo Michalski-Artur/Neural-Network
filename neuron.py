@@ -40,7 +40,8 @@ class Neuron:
         else:
             for neuron in next_layer.neurons:
                 error += neuron.weights[self.neuron_index_in_layer] * neuron.delta
-        self.delta = error * self.__activation_function(self.__output, True)
+        error *= self.__activation_function(self.__activation_function(dot(self.weights, self.__input)), True)
+        self.delta = error
         return self.delta
 
     def update_weights(self, learning_rate: float) -> None:
