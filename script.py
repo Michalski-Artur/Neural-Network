@@ -6,17 +6,17 @@ from error_functions import ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
-train_data_path = 'regression/data.activation.train.100.csv'
-test_data_path = 'regression/data.activation.test.100.csv'
+train_data_path = 'regression/data.activation.train.1000.csv'
+test_data_path = 'regression/data.activation.test.1000.csv'
 problem_type = ProblemType.REGRESSION
 use_bias = True
 hidden_layers_count = 0
 hidden_layer_neurons_count = 1
-activation_function = ActivationFunctions.identity
+activation_function = ActivationFunctions.sigmoid
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 1
 learning_rate = 0.01
-epoch_max = 5000
+epoch_max = 100
 visualize_epochs = False
 
  # Read data
@@ -43,13 +43,13 @@ network = Network(
 network.train(data_manager.training_data, visualize_epochs)
 
 training_result = network.predict(training_data)
-# DataVisualizer.visualize_classification_data(training_data, training_result, 'Training data', 'output/training_data.png')
+DataVisualizer.visualize_data(problem_type, training_data, training_result, 'Training data', 'output/training_data.png')
 
 test_data = data_manager.testing_data
 test_result = network.predict(test_data)
-# DataVisualizer.visualize_classification_data(test_data, test_result, 'Test data', 'output/test_data.png')
+DataVisualizer.visualize_data(problem_type, test_data, test_result, 'Test data', 'output/test_data.png')
 
 # Linear regression coefficients
-(a, b) = network.get_neuron_weights(-1, -1)
-print(f'a={a}, b={b}')
-
+if problem_type == ProblemType.REGRESSION:
+    (a, b) = network.get_neuron_weights(-1, -1)
+    print(f'Linear regression coefficients: a = {a:.4g}, b = {b:.4g}')

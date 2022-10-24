@@ -58,11 +58,11 @@ def __main__() -> None:
     training_data = data_manager.training_data
     network.train(training_data, visualize_epochs)
     training_result = network.predict(training_data)
-    DataVisualizer.visualize_classification_data(training_data, training_result, 'Training data', 'output/training_data.png')
+    DataVisualizer.visualize_data(problem_type, training_data, training_result, 'Training data', 'output/training_data.png')
 
     test_data = data_manager.testing_data
     test_result = network.predict(test_data)
-    DataVisualizer.visualize_classification_data(test_data, test_result, 'Test data', 'output/test_data.png')
+    DataVisualizer.visualize_data(problem_type, test_data, test_result, 'Test data', 'output/test_data.png')
 
 def __parse_problem_type(problem_type: str) -> any:
     if problem_type == 'c':
