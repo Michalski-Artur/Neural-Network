@@ -13,6 +13,17 @@ class DataManager:
     def read_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         self.training_data = pd.read_csv(self.__train_data_path)
         self.testing_data = pd.read_csv(self.__test_data_path)
+        if self.__problem_type is ProblemType.REGRESSION:
+            column = 'y'
+            min = self.training_data[column].min()
+            max = self.training_data[column].max()
+            self.training_data[column] = (self.training_data[column] - min)/(max - min)
+            # self.testing_data[column] = (self.testing_data[column] - self.testing_data[column].min())/\
+            #                             (self.testing_data[column].max() - self.testing_data[column].min())
+            # self.testing_data[column] = (self.testing_data[column] - self.testing_data[column].min()) / \
+            #                             (max - min)
+            self.testing_data[column] = (self.testing_data[column] - min) / \
+                                         (max - min)
         return (self.training_data, self.testing_data)
 
     def get_input_size(self) -> int:

@@ -6,17 +6,19 @@ from error_functions import ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
-train_data_path = 'classification/data.three_gauss.train.1000.csv'
-test_data_path = 'classification/data.three_gauss.test.1000.csv'
-problem_type = ProblemType.CLASSIFICATION
+# train_data_path = 'projekt1-oddanie/regression/data.multimodal.train.1000.csv'
+# test_data_path = 'projekt1-oddanie/regression/data.multimodal.test.1000.csv'
+train_data_path = 'regression/data.activation.train.1000.csv'
+test_data_path = 'regression/data.activation.test.1000.csv'
+problem_type = ProblemType.REGRESSION
 use_bias = True
-hidden_layers_count = 1
-hidden_layer_neurons_count = 2
-activation_function = ActivationFunctions.sigmoid
-error_function = ErrorFunctions.cross_entropy_error
+hidden_layers_count = 2
+hidden_layer_neurons_count = 4
+activation_function = ActivationFunctions.tanh
+error_function = ErrorFunctions.mean_squared_error
 initial_seed = 1
 learning_rate = 0.001
-epoch_max = 100
+epoch_max = 300
 visualize_epochs = False
 
  # Read data
@@ -25,7 +27,7 @@ data_manager.read_data()
 training_data = data_manager.training_data
 input_size = data_manager.get_input_size()
 output_layer_size = data_manager.get_output_layer_size()
-hidden_layer_neurons_count = math.isqrt(input_size * output_layer_size)
+# hidden_layer_neurons_count = math.isqrt(input_size * output_layer_size)
 
 # Create network structure and train it
 network = Network(
