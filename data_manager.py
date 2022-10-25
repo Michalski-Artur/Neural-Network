@@ -18,7 +18,10 @@ class DataManager:
             min = self.training_data[column].min()
             max = self.training_data[column].max()
             self.training_data[column] = (self.training_data[column] - min)/(max - min)
-            self.testing_data[column] = (self.testing_data[column] - self.testing_data[column].min())/(max - min)
+            # self.testing_data[column] = (self.testing_data[column] - self.testing_data[column].min())/\
+            #                             (self.testing_data[column].max() - self.testing_data[column].min())
+            self.testing_data[column] = (self.testing_data[column] - self.testing_data[column].min()) / \
+                                        (max - min)
         return (self.training_data, self.testing_data)
 
     def get_input_size(self) -> int:
