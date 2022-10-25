@@ -12,13 +12,13 @@ train_data_path = 'regression/data.activation.train.1000.csv'
 test_data_path = 'regression/data.activation.test.1000.csv'
 problem_type = ProblemType.REGRESSION
 use_bias = True
-hidden_layers_count = 0
-hidden_layer_neurons_count = 6
+hidden_layers_count = 2
+hidden_layer_neurons_count = 4
 activation_function = ActivationFunctions.tanh
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 1
 learning_rate = 0.001
-epoch_max = 200
+epoch_max = 300
 visualize_epochs = False
 
  # Read data
