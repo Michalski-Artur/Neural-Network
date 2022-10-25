@@ -6,17 +6,19 @@ from error_functions import ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
-train_data_path = 'projekt1-oddanie/regression/data.multimodal.train.1000.csv'
-test_data_path = 'projekt1-oddanie/regression/data.multimodal.test.1000.csv'
+# train_data_path = 'projekt1-oddanie/regression/data.multimodal.train.1000.csv'
+# test_data_path = 'projekt1-oddanie/regression/data.multimodal.test.1000.csv'
+train_data_path = 'regression/data.activation.train.1000.csv'
+test_data_path = 'regression/data.activation.test.1000.csv'
 problem_type = ProblemType.REGRESSION
 use_bias = True
-hidden_layers_count = 3
-hidden_layer_neurons_count = 5
+hidden_layers_count = 0
+hidden_layer_neurons_count = 6
 activation_function = ActivationFunctions.tanh
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 1
-learning_rate = 0.01
-epoch_max = 100
+learning_rate = 0.001
+epoch_max = 200
 visualize_epochs = False
 
  # Read data
