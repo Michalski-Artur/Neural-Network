@@ -24,6 +24,13 @@ class ActivationFunctions:
         return np.tanh(x_value).real
 
     @staticmethod
+    def relu(x_value: float, derivative = False) -> float:
+        # x_value is relu(x) for derivative
+        if derivative:
+            return 1 if x_value > 0 else 0
+        return x_value if x_value > 0 else 0
+
+    @staticmethod
     def softmax_vector(x_vector: list[float]) -> list[float]:
         e_x = np.exp(x_vector - np.max(x_vector))
         return e_x / e_x.sum(axis=0)
