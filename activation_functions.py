@@ -1,5 +1,4 @@
 from typing import Callable, Optional
-from math import e
 import numpy as np
 
 ActivationFunctionType = Callable[[float, Optional[bool]], float]
@@ -15,7 +14,7 @@ class ActivationFunctions:
         # x_value is sigmoid(x) for derivative
         if derivative:
             return x_value * (1.0 - x_value)
-        return 1.0 / (1.0 + e ** -x_value)
+        return 1.0 / (1.0 + np.exp(-x_value))
 
     @staticmethod
     def tanh(x_value: float, derivative = False) -> float:
@@ -25,6 +24,13 @@ class ActivationFunctions:
         return np.tanh(x_value).real
 
     @staticmethod
+    def relu(x_value: float, derivative = False) -> float:
+        # x_value is relu(x) for derivative
+        if derivative:
+            return 1 if x_value > 0 else 0
+        return x_value if x_value > 0 else 0
+
+    @staticmethod
     def softmax_vector(x_vector: list[float]) -> list[float]:
-        val = np.exp(x_vector)
-        return list(val / val.sum())
+        e_x = np.exp(x_vector - np.max(x_vector))
+        return e_x / e_x.sum(axis=0)

@@ -8,7 +8,7 @@
       "name": "Python: Main Script",
       "type": "python",
       "request": "launch",
-      "program": "script.py",
+      "program": "test_regression.py",
       "console": "integratedTerminal",
       "justMyCode": true
     }
