@@ -54,8 +54,3 @@ for error_function in [ErrorFunctions.mean_squared_error, ErrorFunctions.mean_ab
         mse_sum += mse
         DataVisualizer.visualize_data(problem_type, test_data, test_result, 'Test data', f'output/test_data_activation_sigmoid_{error_desc}_{seed}.png')
     print(f'Total mse (for testing sigmoid with {error_desc} on {hidden_layers_count} layers): {mse_sum/5:.3g}')
-
-# Linear regression coefficients
-if problem_type == ProblemType.REGRESSION:
-    (a, b) = network.get_neuron_weights(-1, -1)
-    print(f'Linear regression coefficients: a = {a:.3f}, b = {b:.3f}')

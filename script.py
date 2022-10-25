@@ -6,15 +6,13 @@ from error_functions import ErrorFunctions
 from network import Network
 from network_enums import ProblemType
 
-# train_data_path = 'projekt1-oddanie/regression/data.multimodal.train.1000.csv'
-# test_data_path = 'projekt1-oddanie/regression/data.multimodal.test.1000.csv'
-train_data_path = 'regression/data.activation.train.1000.csv'
-test_data_path = 'regression/data.activation.test.1000.csv'
-problem_type = ProblemType.REGRESSION
+train_data_path = 'classification/data.simple.train.1000.csv'
+test_data_path = 'classification/data.simple.test.1000.csv'
+problem_type = ProblemType.CLASSIFICATION
 use_bias = True
-hidden_layers_count = 2
-hidden_layer_neurons_count = 4
-activation_function = ActivationFunctions.tanh
+hidden_layers_count = 0
+hidden_layer_neurons_count = 2
+activation_function = ActivationFunctions.sigmoid
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 1
 learning_rate = 0.001
@@ -50,8 +48,3 @@ DataVisualizer.visualize_data(problem_type, training_data, training_result, 'Tra
 test_data = data_manager.testing_data
 test_result = network.predict(test_data)
 DataVisualizer.visualize_data(problem_type, test_data, test_result, 'Test data', 'output/test_data.png')
-
-# Linear regression coefficients
-if problem_type == ProblemType.REGRESSION:
-    (a, b) = network.get_neuron_weights(-1, -1)
-    print(f'Linear regression coefficients: a = {a:.3f}, b = {b:.3f}')

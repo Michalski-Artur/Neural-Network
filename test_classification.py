@@ -53,9 +53,3 @@ for hidden_layers_count in range(5):
         accuracy += sum([1 if test_data['cls'][i] == test_result[i] else 0 for i in range(len(test_data))]) / len(test_data)
         DataVisualizer.visualize_data(problem_type, test_data, test_result, 'Test data', f'output/test_layers_{hidden_layers_count}_relu_{seed}.png')
     print(f'Total accuracy ({hidden_layers_count} layers): {accuracy/5*100:.3f}%')
-
-
-# Linear regression coefficients
-if problem_type == ProblemType.REGRESSION:
-    (a, b) = network.get_neuron_weights(-1, -1)
-    print(f'Linear regression coefficients: a = {a:.3f}, b = {b:.3f}')

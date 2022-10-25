@@ -32,7 +32,6 @@ class Neuron:
         self.__output: float = self.__activation_function(dot(self.weights, input_value)) if new_output is None else new_output
         return self.__output
 
-    # Based on: https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/
     def calculate_error(self, expected_output: list[float], next_layer) -> float:
         error = 0
         if next_layer is None:
@@ -47,4 +46,3 @@ class Neuron:
     def update_weights(self, learning_rate: float) -> None:
         delta_weights = np.multiply(self.__input, self.delta * learning_rate)
         self.weights = np.add(self.weights, -delta_weights)
-        # self.weights = np.clip(np.add(self.weights, -delta_weights), -1e5, 1e5)

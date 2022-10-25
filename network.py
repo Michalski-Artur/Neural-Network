@@ -132,10 +132,3 @@ class Network:
     def __update_weights(self) -> None:
         for layer in self.__layers:
             layer.update_weights(self.__learning_rate)
-
-    # Uncomment this function if ever needed (but also has to be fixed)
-    # def __scale_regression_data(self, data: pd.DataFrame) -> tuple[pd.DataFrame, float]:
-    #     scale = abs(max(data.max().max(), data.min().min(), key=abs))
-    #     new_data = data / scale
-
-    #     return (new_data, scale)
