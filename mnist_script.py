@@ -5,23 +5,15 @@ from error_functions import ErrorFunctions
 from mnist import MNIST
 import numpy as np
 
+from mnist_data_manager import MnistDataManager
 from network import Network
 from network_enums import ProblemType
-
-mndata = MNIST('./mnist')
-
-images, labels = mndata.load_training()
-# or
-# images, labels = mndata.load_testing()
 
 # Problems with adapting PyCharm Console width to the width of samples
 # desired_width = 320
 # pd.set_option('display.width', desired_width)
 # pd.set_option('display.max_columns', 20)
 # np.set_printoptions(linewidth=desired_width)
-
-index = 1
-print(mndata.display(images[index]))
 
 # Numbers are stored in images table as 28*28 arrays. Each element of the array ranges from 0 to 255 indicating grey scale
 # Labels store number presented in i-th image
@@ -44,8 +36,10 @@ initial_seed = 1
 learning_rate = 0.01
 epoch_max = 300
 visualize_epochs = False
-input_size = 28*28
-output_layer_size = 10
+
+data_manager = MnistDataManager()
+input_size = data_manager.get_input_size()
+output_layer_size = data_manager.get_output_layer_size()
 
 # Create network structure and train it
 network = Network(
@@ -60,3 +54,5 @@ network = Network(
     initial_seed=initial_seed,
     learning_rate=learning_rate,
     epoch_max=epoch_max)
+
+(images, labels) = data_manager.read_data()
