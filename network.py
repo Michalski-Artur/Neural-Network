@@ -65,8 +65,8 @@ class Network:
             if visualize:
                 self.visualize(current_iteration, current_iteration == self.__epoch_no)
             print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error ({self.__problem_type.name.lower()})= {sum_error/sample_len:.3g}')
-        if not visualize:
-            self.visualize(current_iteration, True)
+#        if not visualize:
+#            self.visualize(current_iteration, True)
 
     def predict(self, test_set: pd.DataFrame) -> list[float]:
         predictions = []

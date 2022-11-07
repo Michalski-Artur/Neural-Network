@@ -1,6 +1,7 @@
 import pandas as pd
 
 from activation_functions import ActivationFunctions
+from data_visualizer import DataVisualizer
 from error_functions import ErrorFunctions
 from mnist import MNIST
 import numpy as np
@@ -29,12 +30,12 @@ from network_enums import ProblemType
 problem_type = ProblemType.CLASSIFICATION
 use_bias = True
 hidden_layers_count = 2
-hidden_layer_neurons_count = 300
-activation_function = ActivationFunctions.sigmoid
+hidden_layer_neurons_count = 200
+activation_function = ActivationFunctions.tanh
 error_function = ErrorFunctions.mean_squared_error
-initial_seed = 1
-learning_rate = 0.01
-epoch_max = 300
+initial_seed = 256
+learning_rate = 0.1
+epoch_max = 10
 visualize_epochs = False
 
 data_manager = MnistDataManager()
@@ -55,4 +56,7 @@ network = Network(
     learning_rate=learning_rate,
     epoch_max=epoch_max)
 
-(images, labels) = data_manager.read_data()
+images = pd.DataFrame(data_manager.read_data())
+network.train(images, visualize_epochs)
+training_result = network.predict(images)
+#DataVisualizer.visualize_data(problem_type, images, training_result, 'Training data', 'output/training_data.png')
