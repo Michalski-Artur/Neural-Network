@@ -1,22 +1,25 @@
 from mnist import MNIST
+import pandas as pd
+
+from data_manager import DataManager
+from network_enums import ProblemType
 
 
-class MnistDataManager:
+class MnistDataManager(DataManager):
     def __init__(self) -> None:
-        self.mndata = MNIST('./mnist')
+        super().__init__(train_data_path='', test_data_path='', problem_type=ProblemType.CLASSIFICATION)
+        self.__mndata = MNIST('./mnist')
 
-    def read_data(self, is_test_data: bool = False):
-        (images, labels) = self.mndata.load_testing() if is_test_data else self.mndata.load_training()
-        new_images = []
-        for (index, image) in enumerate(images):
-            new_image = [x / 255.0 for x in image]
-            new_image.append(labels[index])
-            new_images.append(new_image)
-            if index > 10000:
-                break
-        return new_images
-    def get_input_size(self) -> int:
-        return 28*28
+    def read_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        train = self.__mndata.load_training()
+        test = self.__mndata.load_testing()
+        self.training_data = pd.DataFrame(train[0])
+        self.training_data = self.training_data / 255.0
+        self.training_data['cls'] = train[1]
+        self.testing_data = pd.DataFrame(test[0])
+        self.testing_data = self.testing_data / 255.0
+        self.testing_data['cls'] = test[1]
 
-    def get_output_layer_size(self) -> int:
-        return 10
+        self.training_data = self.training_data.sample(n=1000)
+        self.testing_data = self.testing_data.sample(n=1000)
+        return (self.training_data, self.testing_data)

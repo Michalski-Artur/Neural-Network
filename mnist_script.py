@@ -29,18 +29,21 @@ from network_enums import ProblemType
 
 problem_type = ProblemType.CLASSIFICATION
 use_bias = True
-hidden_layers_count = 2
-hidden_layer_neurons_count = 200
-activation_function = ActivationFunctions.tanh
+hidden_layers_count = 1
+hidden_layer_neurons_count = 100
+activation_function = ActivationFunctions.relu
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 256
 learning_rate = 0.1
-epoch_max = 10
+epoch_max = 50
 visualize_epochs = False
 
+print('Reading MNIST data...')
 data_manager = MnistDataManager()
+data_manager.read_data()
 input_size = data_manager.get_input_size()
 output_layer_size = data_manager.get_output_layer_size()
+print('MNIST Data read.')
 
 # Create network structure and train it
 network = Network(
@@ -56,7 +59,6 @@ network = Network(
     learning_rate=learning_rate,
     epoch_max=epoch_max)
 
-images = pd.DataFrame(data_manager.read_data())
-network.train(images, visualize_epochs)
-training_result = network.predict(images)
-#DataVisualizer.visualize_data(problem_type, images, training_result, 'Training data', 'output/training_data.png')
+network.train(data_manager.training_data, False)
+training_result = network.predict(data_manager.training_data)
+DataVisualizer.visualize_mnist_data(data_manager.training_data, training_result, 'Training data', 'output/training_data.png')

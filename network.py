@@ -23,6 +23,7 @@ class Network:
         self.__layers: list[Layer] = []
         hidden_layers = [Layer([basic_neuron.copy_neuron() for _ in range(hidden_layer_neurons_count)], use_bias) for _ in range(hidden_layers_count)]
         output_layer = Layer([basic_neuron.copy_neuron() for _ in range(output_size)], use_bias)
+        i = 0
         for hidden_layer in hidden_layers:
             self.add_network_layer(hidden_layer)
         self.add_network_layer(output_layer)
@@ -32,7 +33,7 @@ class Network:
         if layer.previous_layer_has_bias:
             previous_layer_size += 1
         self.__layers.append(layer)
-        layer.set_weights(previous_layer_size)
+        layer.set_weights(previous_layer_size, len(self.__layers) - 1)
 
     def get_neuron_weights(self, layer_index, neuron_index):
         return self.__layers[layer_index].neurons[neuron_index].weights
@@ -40,10 +41,12 @@ class Network:
     def train(self, training_set: pd.DataFrame, visualize: bool = False) -> None:
         current_iteration = 0
         sum_error = self.__error_threshold
+        converted_training_set = training_set.to_numpy()
         while not self.__stop_condition_met(current_iteration, sum_error):
             current_iteration += 1
-            training_set = training_set.sample(frac=1)  # shuffle training set
-            x_train, y_train = training_set.values[:, :-1], training_set.values[:, -1]
+            # training_set = training_set.sample(frac=1)  # shuffle training set
+            np.random.shuffle(converted_training_set)
+            x_train, y_train = converted_training_set[:, :-1], converted_training_set[:, -1]
             sum_error = 0.0
             input_value: np.ndarray
             expected_result: float
@@ -62,8 +65,8 @@ class Network:
                     raise Exception('Not supported problem type')
                 self.__backward_pass(expected)
                 self.__update_weights()
-            if visualize:
-                self.visualize(current_iteration, current_iteration == self.__epoch_no)
+            # if visualize:
+            #     self.visualize(current_iteration, current_iteration == self.__epoch_no)
             print(f'Training in progress (epoch={current_iteration}/{self.__epoch_no}). Mean error ({self.__problem_type.name.lower()})= {sum_error/sample_len:.3g}')
 #        if not visualize:
 #            self.visualize(current_iteration, True)
