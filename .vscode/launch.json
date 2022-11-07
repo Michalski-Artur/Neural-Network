@@ -8,7 +8,7 @@
       "name": "Python: Main Script",
       "type": "python",
       "request": "launch",
-      "program": "mnist_script.py",
+      "program": "test_classification_mnist.py",
       "console": "integratedTerminal",
       "justMyCode": true
     }

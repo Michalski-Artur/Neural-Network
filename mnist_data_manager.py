@@ -13,12 +13,10 @@ class MnistDataManager(DataManager):
     def read_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         train = self.__mndata.load_training()
         test = self.__mndata.load_testing()
-        self.training_data = pd.DataFrame(train[0])
-        self.training_data = self.training_data / 255.0
-        self.training_data['cls'] = train[1]
-        self.testing_data = pd.DataFrame(test[0])
-        self.testing_data = self.testing_data / 255.0
-        self.testing_data['cls'] = test[1]
+        self.training_data = pd.DataFrame(train[0]) / 255.0
+        self.training_data['cls'] = [x + 1 for x in train[1]]
+        self.testing_data = pd.DataFrame(test[0]) / 255.0
+        self.testing_data['cls'] = [x + 1 for x in test[1]]
 
         self.training_data = self.training_data.sample(n=1000)
         self.testing_data = self.testing_data.sample(n=1000)

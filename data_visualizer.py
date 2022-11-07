@@ -14,12 +14,12 @@ class DataVisualizer:
             DataVisualizer.__visualize_regression_data(data, result, title, output_file_name)
 
     @staticmethod
-    def visualize_mnist_data(data: DataFrame, result: list[float], title: str, output_file_name = None) -> None:
+    def print_mnist_result(data: DataFrame, result: list[float]) -> None:
         number_of_classes = data['cls'].max()
-        for i in range(number_of_classes + 1):
+        for i in range(1, number_of_classes + 1):
             matched = result.count(i)
             total = len(data[data['cls'] == i])
-            print(f'Class {i}: {matched} / {total}')
+            print(f'Class {i - 1}: {matched} / {total}')
 
     @staticmethod
     def __visualize_classification_data(data: DataFrame, result: list[int], title: str, output_file_name = None) -> None:
