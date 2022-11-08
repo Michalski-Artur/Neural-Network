@@ -23,7 +23,7 @@ class MnistDataManager(DataManager):
         self.testing_data['cls'] = test[1]
         self.testing_data['cls'] = self.testing_data['cls'] + 1
 
-        self.training_data = self.training_data.sample(n=2000, random_state=self.random_state)
+        self.training_data = self.training_data.sample(n=20000, random_state=self.random_state)
         self.testing_data = self.testing_data
         return (self.training_data, self.testing_data)
 

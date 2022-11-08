@@ -16,7 +16,7 @@ activation_function = ActivationFunctions.sigmoid
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 256
 learning_rate = 0.1
-epoch_max = 25
+epoch_max = 100
 visualize_epochs = False
 
 print('Reading MNIST data...')
