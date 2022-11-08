@@ -22,6 +22,9 @@ class MnistDataManager(DataManager):
         self.testing_data['cls'] = test[1]
         self.testing_data['cls'] = self.testing_data['cls'] + 1
 
-        self.training_data = self.training_data.sample(n=1000)
-        self.testing_data = self.testing_data.sample(n=1000)
+        self.training_data = self.training_data.sample(n=2000)
+        self.testing_data = self.testing_data
         return (self.training_data, self.testing_data)
+
+    def get_output_layer_size(self) -> int:
+        return self.training_data.iloc[:, -1].max() + 1

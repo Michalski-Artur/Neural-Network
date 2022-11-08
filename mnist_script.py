@@ -29,13 +29,13 @@ from network_enums import ProblemType
 
 problem_type = ProblemType.CLASSIFICATION
 use_bias = True
-hidden_layers_count = 2
+hidden_layers_count = 1
 hidden_layer_neurons_count = 100
 activation_function = ActivationFunctions.sigmoid
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 256
 learning_rate = 0.1
-epoch_max = 25
+epoch_max = 30
 visualize_epochs = False
 
 print('Reading MNIST data...')
@@ -61,5 +61,5 @@ network = Network(
 
 network.train(data_manager.training_data, False)
 
-training_result = network.predict(data_manager.training_data)
-DataVisualizer.visualize_mnist_data(data_manager.training_data, training_result, 'Training data', 'output/training_data.png')
+testing_result = network.predict(data_manager.training_data)
+DataVisualizer.visualize_mnist_data(data_manager.training_data, testing_result, 'Testing data', 'output/testing_data.png')
