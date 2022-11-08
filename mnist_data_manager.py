@@ -16,9 +16,11 @@ class MnistDataManager(DataManager):
         self.training_data = pd.DataFrame(train[0])
         self.training_data = self.training_data / 255.0
         self.training_data['cls'] = train[1]
+        self.training_data['cls'] = self.training_data['cls'] + 1
         self.testing_data = pd.DataFrame(test[0])
         self.testing_data = self.testing_data / 255.0
         self.testing_data['cls'] = test[1]
+        self.testing_data['cls'] = self.testing_data['cls'] + 1
 
         self.training_data = self.training_data.sample(n=1000)
         self.testing_data = self.testing_data.sample(n=1000)

@@ -35,11 +35,11 @@ class Neuron:
     def calculate_error(self, expected_output: list[float], next_layer) -> float:
         error = 0
         if next_layer is None:
-            error = self.__error_function(self.__output, expected_output[self.neuron_index_in_layer], True)
+            error = self.__output - expected_output[self.neuron_index_in_layer]
         else:
             for neuron in next_layer.neurons:
                 error += neuron.weights[self.neuron_index_in_layer] * neuron.delta
-        error *= self.__activation_function(self.__activation_function(dot(self.weights, self.__input)), True)
+        error *= self.__activation_function(self.__output, True)
         self.delta = error
         return self.delta
 

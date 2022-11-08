@@ -29,13 +29,13 @@ from network_enums import ProblemType
 
 problem_type = ProblemType.CLASSIFICATION
 use_bias = True
-hidden_layers_count = 1
+hidden_layers_count = 2
 hidden_layer_neurons_count = 100
-activation_function = ActivationFunctions.relu
+activation_function = ActivationFunctions.sigmoid
 error_function = ErrorFunctions.mean_squared_error
 initial_seed = 256
 learning_rate = 0.1
-epoch_max = 50
+epoch_max = 25
 visualize_epochs = False
 
 print('Reading MNIST data...')
