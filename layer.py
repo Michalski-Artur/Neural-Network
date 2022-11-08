@@ -18,9 +18,9 @@ class Layer:
         for neuron in self.neurons:
             neuron.update_weights(learning_rate)
 
-    def set_weights(self, previous_layer_size: int) -> None:
-        for neuron in self.neurons:
-            neuron.set_weights((np.random.rand(previous_layer_size).tolist()))
+    def set_weights(self, previous_layer_size: int, layer_index: int) -> None:
+        for (neuron_index, neuron) in enumerate(self.neurons):
+            neuron.set_weights((np.random.rand(previous_layer_size)*2-1).tolist())
 
     def calculate_output(self, input_value: list[float], problem_type: ProblemType, is_output: bool) -> list[float]:
         if is_output:

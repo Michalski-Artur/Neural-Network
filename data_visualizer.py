@@ -14,6 +14,17 @@ class DataVisualizer:
             DataVisualizer.__visualize_regression_data(data, result, title, output_file_name)
 
     @staticmethod
+    def visualize_mnist_data(data: DataFrame, result: list[float]) -> None:
+        number_of_classes = data['cls'].max()
+        for i in range(number_of_classes):
+            matched = result.count(i+1)
+            total = len(data[data['cls'] == i+1])
+            print(f'Class {i}: {matched} / {total}')
+        accuracy = sum([1 if data['cls'].values[i] == result[i] else 0 for i in range(len(data))]) / len(
+            data)
+        print(f'Accuracy: {accuracy * 100:.3f}%')
+
+    @staticmethod
     def __visualize_classification_data(data: DataFrame, result: list[int], title: str, output_file_name = None) -> None:
         data['cls_calculated'] = result
         number_of_classes = data['cls'].max()
