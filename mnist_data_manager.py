@@ -6,7 +6,8 @@ from network_enums import ProblemType
 
 
 class MnistDataManager(DataManager):
-    def __init__(self) -> None:
+    def __init__(self, random_state) -> None:
+        self.random_state = random_state
         super().__init__(train_data_path='', test_data_path='', problem_type=ProblemType.CLASSIFICATION)
         self.__mndata = MNIST('./mnist')
 
@@ -22,7 +23,7 @@ class MnistDataManager(DataManager):
         self.testing_data['cls'] = test[1]
         self.testing_data['cls'] = self.testing_data['cls'] + 1
 
-        self.training_data = self.training_data.sample(n=2000)
+        self.training_data = self.training_data.sample(n=2000, random_state=self.random_state)
         self.testing_data = self.testing_data
         return (self.training_data, self.testing_data)
 

@@ -14,7 +14,7 @@ class DataVisualizer:
             DataVisualizer.__visualize_regression_data(data, result, title, output_file_name)
 
     @staticmethod
-    def visualize_mnist_data(data: DataFrame, result: list[float], title: str, output_file_name = None) -> None:
+    def visualize_mnist_data(data: DataFrame, result: list[float]) -> None:
         number_of_classes = data['cls'].max()
         for i in range(number_of_classes):
             matched = result.count(i+1)
