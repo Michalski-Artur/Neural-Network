@@ -60,5 +60,6 @@ network = Network(
     epoch_max=epoch_max)
 
 network.train(data_manager.training_data, False)
+
 training_result = network.predict(data_manager.training_data)
 DataVisualizer.visualize_mnist_data(data_manager.training_data, training_result, 'Training data', 'output/training_data.png')
